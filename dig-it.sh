@@ -34,13 +34,13 @@ Options and their usage:
   -y, --makeitweird    Checks every type of DNS record I could find that
                        does not require a variable subdomain. May get
                        weirder as I find more.
-  -h, --help           well... here we are.
+  -h, --help           Display help messages.
 
 Common issues may occur when trying to use more than 2 variables (flag + domain
 + other). 
 Author: Kyle Martinez
-Report bugs to: kmartinez@liquidweb.com
-Current version: 2.0.0
+Report bugs to: https://github.com/kmartinez5555/dig-it/issues
+Current version: 2.0.1
   "
 }
 
@@ -98,9 +98,9 @@ verbose_dns () {
             dig ${OPTS} ${_mx_server}; done)
             if [[ -z ${_mx_ip} ]]
             then
-                echo -e "  ${RED} Mail server(s) does not resolve${RESET} \n"
+                echo -e "  ${RED}Mail server(s) does not resolve${RESET} \n"
             else
-                echo -e " ${GREEN} Mail server(s) resolves to:${RESET}"
+                echo -e " ${GREEN}Mail server(s) resolves to:${RESET}"
                 echo "${_mx_ip}"
             fi
             ;;
@@ -110,9 +110,9 @@ verbose_dns () {
             dig ${OPTS} ${_ns_output};done)
             if [[ -z ${_ns_resolve} ]]
             then
-                echo -e "  ${RED} Nameservers do not resolve${RESET} \n"
+                echo -e "  ${RED}Nameservers do not resolve${RESET} \n"
             else
-                echo -e "  ${GREEN} Nameserver resolves to:${RESET}"
+                echo -e "  ${GREEN}Nameserver resolves to:${RESET}"
                 echo "${_ns_resolve}"
             fi
             ;;
@@ -140,9 +140,9 @@ mail_dns () {
             do dig ${OPTS} ${_mx_server}; done)
             if [[ -z ${_mx_ip} ]]
             then
-                echo -e "  ${RED} Mail server(s) does not resolve${RESET} \n"
+                echo -e "  ${RED}Mail server(s) does not resolve${RESET} \n"
             else
-                echo -e " ${GREEN} Mail server(s) resolves to:${RESET}"
+                echo -e " ${GREEN}Mail server(s) resolves to:${RESET}"
                 echo "${_mx_ip}"
             fi
 
@@ -202,9 +202,9 @@ DO_IT_ALL_dns () {
             dig ${OPTS} ${_mx_server}; done)
             if [[ -z ${_mx_ip} ]]
             then
-              echo -e "  ${RED} Mail server(s) does not resolve${RESET} \n"
+              echo -e "  ${RED}Mail server(s) does not resolve${RESET} \n"
             else
-              echo -e " ${GREEN} Mail server(s) resolves to:${RESET}"
+              echo -e " ${GREEN}Mail server(s) resolves to:${RESET}"
                 echo "${_mx_ip}"
             fi
             local _dmarc=$(dig ${OPTS} TXT _dmarc.${domain})
@@ -222,9 +222,9 @@ DO_IT_ALL_dns () {
             dig ${OPTS} ${_ns_output};done)
             if [[ -z ${_ns_resolve} ]]
             then
-                echo -e "  ${RED} Nameservers do not resolve${RESET} \n"
+                echo -e "  ${RED}Nameservers do not resolve${RESET} \n"
             else
-                echo -e "  ${GREEN} Nameserver resolves to:${RESET}"
+                echo -e "  ${GREEN}Nameserver resolves to:${RESET}"
                 echo "${_ns_resolve}"
             fi
             ;;
