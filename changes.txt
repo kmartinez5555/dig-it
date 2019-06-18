@@ -1,0 +1,3 @@
+Update v2.0.1
+  * Made some tweaks to character spacing to align more consistently
+  * Edited bug reporting to github page
