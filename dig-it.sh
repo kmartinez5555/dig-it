@@ -1,12 +1,5 @@
 #!/bin/bash
-#
-#
 # Author: Kyle Martinez
-#
-# Created: Oct-25-2017
-# Updated: In development (Jun-17-19)
-#
-#
 # Purpose: One stop shop for DNS info
 
 
@@ -24,7 +17,7 @@ get_help () {
 This command is desgined to parse commonly used DNS records and
 report them in an easy to view format
 
-Usage: digit [OPTION] [domain]
+Usage: dig-it [OPTION] [domain]
 
 Options and their usage:
   -b, --basic          Runs only basic DNS checks (A, MX, NS)
@@ -34,13 +27,13 @@ Options and their usage:
   -y, --makeitweird    Checks every type of DNS record I could find that
                        does not require a variable subdomain. May get
                        weirder as I find more.
-  -h, --help           Display help messages.
+  -h, --help           well... here we are.
 
 Common issues may occur when trying to use more than 2 variables (flag + domain
-+ other). 
++ other).
 Author: Kyle Martinez
 Report bugs to: https://github.com/kmartinez5555/dig-it/issues
-Current version: 2.0.1
+Current version: 0.2.2
   "
 }
 
@@ -98,9 +91,9 @@ verbose_dns () {
             dig ${OPTS} ${_mx_server}; done)
             if [[ -z ${_mx_ip} ]]
             then
-                echo -e "  ${RED}Mail server(s) does not resolve${RESET} \n"
+                echo -e "  ${RED} Mail server(s) does not resolve${RESET} \n"
             else
-                echo -e " ${GREEN}Mail server(s) resolves to:${RESET}"
+                echo -e " ${GREEN} Mail server(s) resolves to:${RESET}"
                 echo "${_mx_ip}"
             fi
             ;;
@@ -110,9 +103,9 @@ verbose_dns () {
             dig ${OPTS} ${_ns_output};done)
             if [[ -z ${_ns_resolve} ]]
             then
-                echo -e "  ${RED}Nameservers do not resolve${RESET} \n"
+                echo -e "  ${RED} Nameservers do not resolve${RESET} \n"
             else
-                echo -e "  ${GREEN}Nameserver resolves to:${RESET}"
+                echo -e "  ${GREEN} Nameserver resolves to:${RESET}"
                 echo "${_ns_resolve}"
             fi
             ;;
@@ -140,9 +133,9 @@ mail_dns () {
             do dig ${OPTS} ${_mx_server}; done)
             if [[ -z ${_mx_ip} ]]
             then
-                echo -e "  ${RED}Mail server(s) does not resolve${RESET} \n"
+                echo -e "  ${RED} Mail server(s) does not resolve${RESET} \n"
             else
-                echo -e " ${GREEN}Mail server(s) resolves to:${RESET}"
+                echo -e " ${GREEN} Mail server(s) resolves to:${RESET}"
                 echo "${_mx_ip}"
             fi
 
@@ -202,9 +195,9 @@ DO_IT_ALL_dns () {
             dig ${OPTS} ${_mx_server}; done)
             if [[ -z ${_mx_ip} ]]
             then
-              echo -e "  ${RED}Mail server(s) does not resolve${RESET} \n"
+              echo -e "  ${RED} Mail server(s) does not resolve${RESET} \n"
             else
-              echo -e " ${GREEN}Mail server(s) resolves to:${RESET}"
+              echo -e " ${GREEN} Mail server(s) resolves to:${RESET}"
                 echo "${_mx_ip}"
             fi
             local _dmarc=$(dig ${OPTS} TXT _dmarc.${domain})
@@ -222,9 +215,9 @@ DO_IT_ALL_dns () {
             dig ${OPTS} ${_ns_output};done)
             if [[ -z ${_ns_resolve} ]]
             then
-                echo -e "  ${RED}Nameservers do not resolve${RESET} \n"
+                echo -e "  ${RED} Nameservers do not resolve${RESET} \n"
             else
-                echo -e "  ${GREEN}Nameserver resolves to:${RESET}"
+                echo -e "  ${GREEN} Nameserver resolves to:${RESET}"
                 echo "${_ns_resolve}"
             fi
             ;;
@@ -234,48 +227,85 @@ DO_IT_ALL_dns () {
   done
 }
 
-  ### This is the acutal execution of the script. This allows for flags to be run and functions to 
-  ### be called individually.
-if [[ $# == 1 ]] 
-then 
+### Get TLD check info and update
+if [[ ! -f ~/tmp/tld.$(date +"%m.%d.%y").txt ]]
+then
+  ## make temp dir, empty contents of old file, and update date of file
+  mkdir -p ~/tmp/
+  :> ~/tmp/tld*
+  mv  ~/tmp/tld* ~/tmp/tld.$(date +"%m.%d.%y").txt
+  ## Grab the TLD data and import into file. Also include text to define file usage
+  curl -s http://data.iana.org/TLD/tlds-alpha-by-domain.txt | tr [:upper:] [:lower:] > ~/tmp/tld.$(date +"%m.%d.%y").txt
+  sed -i '1i ### This file is a resource the dig-it command' ~/tmp/tld.$(date +"%m.%d.%y").txt
+fi
+
+
+### This is the acutal execution of the script. This allows for flags to be run and functions to be called individually.
+
+	## Test 1: More than 3 arguments fails the script
+if [[ $# -ge 3 ]]
+then
+  echo -e "\n ${RED}ERROR: Too many arguments. Please review your input and try again ${RESTET}\n"
+	## Test 2: If arguments is one, not a flag, and matches TLD it will print output
+elif [[ $# == 1 ]] && [[ $1 != "-"* ]] && [[ -n $(grep ^$(echo $1 | rev | cut -d\. -f1 | rev)$ ~/tmp/tld.$(date +"%m.%d.%y").txt) ]]
+  then 
   initial_whois
   basic_dns
+	## Test 3: If argument is 1 and is the help flag it will print output
+elif [[ $# == 1 ]] && [[ $1 == '-h' ]] || [[ $1 == '--help' ]]
+  then
+    get_help
+    exit 1
+	## Test 4: If arguments are two it continues
+elif [[ $# == 2 ]] 
+  then
+			## Test 5: Determines location of flag and domain then continue
+    if [[ $1 == "-"* ]]
+      then
+				domain=$2
+				flag=$1
+			else	
+				domain=$1
+				flag=$2
+		fi
+			## Test 6: If domain matches TLD test then proceed to case statement for each flag output
+	  if [[ -n $(grep ^$(echo ${domain} | rev | cut -d\. -f1 | rev)$ ~/tmp/tld.$(date +"%m.%d.%y").txt) ]]
+	  then
+	    case ${flag} in
+	     -w)
+	       initial_whois
+	       exit 1
+	       ;;
+	     -b | --basic)
+	       basic_dns
+	       exit 1
+	       ;;
+	     -v | --verbose)
+	       initial_whois
+	       verbose_dns
+	       exit 1
+	       ;;
+	     -y | --makeitweird)
+	       DO_IT_ALL_dns
+	       exit 1
+	       ;;
+	     -m | --mail)
+	       echo -e "\n"
+	       mail_dns
+	       exit 1
+	       ;;
+	     -h | --help)
+	       get_help
+	       exit 1
+	       ;;
+	     -*)
+	       echo -e "\n ${RED}ERROR: Invalid option: \"${1}\"\n Use \"-h\" or \"--help\" for more options${RESET}\n" >&2
+		   	exit 1
+	       ;;
+	    esac
+		else
+			echo -e "\n ${RED} ERROR: Need a fully qualified domain${RESET}\n"
+	  fi
 else
-  while [[ $# > 1 ]]
-  do
-  domain=$2
-    case $1 in
-      -w)
-        initial_whois
-        exit 1
-        ;;
-      -b | --basic)
-        basic_dns
-        exit 1
-        ;;
-      -v | --verbose)
-        initial_whois
-        verbose_dns
-        exit 1
-        ;;
-      -y | --makeitweird)
-        DO_IT_ALL_dns
-        exit 1
-        ;;
-      -m | --mail)
-        mail_dns
-        exit 1
-        ;;
-      -h | --help)
-        get_help
-        exit 1
-        ;;
-      -*)
-        echo "Invalid option: ${1}" >&2
-        exit 1
-        ;;
-    esac
-  done
-#else
-#  echo "Please enter a proper domain or option followed by a domain"
+  echo -e "${RED} \n ERROR: Need a fully qualified domain\n Use \"-h\" or \"--help\" for more options${RESET}\n"
 fi
