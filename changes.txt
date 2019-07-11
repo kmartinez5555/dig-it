@@ -1,3 +1,12 @@
-Update v2.0.1
+Update v0.2.1
   * Made some tweaks to character spacing to align more consistently
   * Edited bug reporting to github page
+
+Update v0.2.2
+  * Added file download for TLD test. This does download a TLD list from iana.org and creates a tmp file that gets updated daily.
+    - original file exists here: https://data.iana.org/TLD/tlds-alpha-by-domain.txt
+    - file tests for a ~/tmp/ directory in the current user, makes if needed, then places the temp file there.
+  * Added several sanity checks in the exectution of the script
+    - Now verifies fully qualified TLD's
+    - Tests to allow flag placement at beginning or end of script
+  * Added additional noting and error reporting
