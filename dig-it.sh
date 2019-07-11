@@ -2,9 +2,6 @@
 # Author: Kyle Martinez
 # Purpose: One stop shop for DNS info
 
-
-## Variables
-domain=$1
 ## Color variables
 OPTS='+short +noshort'
 RED="\e[31m"
