@@ -235,7 +235,7 @@ then
   :> ~/tmp/tld*
   mv  ~/tmp/tld* ~/tmp/tld.$(date +"%m.%d.%y").txt
   ## Grab the TLD data and import into file. Also include text to define file usage
-  curl -s http://data.iana.org/TLD/tlds-alpha-by-domain.txt | tr [:upper:] [:lower:] > ~/tmp/tld.$(date +"%m.%d.%y").txt
+  curl -s https://data.iana.org/TLD/tlds-alpha-by-domain.txt | tr [:upper:] [:lower:] > ~/tmp/tld.$(date +"%m.%d.%y").txt
   sed -i '1i ### This file is a resource the dig-it command' ~/tmp/tld.$(date +"%m.%d.%y").txt
 fi
 
