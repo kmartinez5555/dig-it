@@ -259,50 +259,50 @@ elif [[ $# == 2 ]]
 			## Test 5: Determines location of flag and domain then continue
     if [[ $1 == "-"* ]]
       then
-				domain=$2
-				flag=$1
-			else	
-				domain=$1
-				flag=$2
-		fi
-			## Test 6: If domain matches TLD test then proceed to case statement for each flag output
-	  if [[ -n $(grep ^$(echo ${domain} | rev | cut -d\. -f1 | rev)$ ~/tmp/tld.$(date +"%m.%d.%y").txt) ]]
-	  then
-	    case ${flag} in
-	     -w)
-	       initial_whois
-	       exit 1
-	       ;;
-	     -b | --basic)
-	       basic_dns
-	       exit 1
-	       ;;
-	     -v | --verbose)
-	       initial_whois
-	       verbose_dns
-	       exit 1
-	       ;;
-	     -y | --makeitweird)
-	       DO_IT_ALL_dns
-	       exit 1
-	       ;;
-	     -m | --mail)
-	       echo -e "\n"
-	       mail_dns
-	       exit 1
-	       ;;
-	     -h | --help)
-	       get_help
-	       exit 1
-	       ;;
-	     -*)
-	       echo -e "\n ${RED}ERROR: Invalid option: \"${1}\"\n Use \"-h\" or \"--help\" for more options${RESET}\n" >&2
-		   	exit 1
-	       ;;
-	    esac
-		else
-			echo -e "\n ${RED} ERROR: Need a fully qualified domain${RESET}\n"
-	  fi
+	domain=$2
+	flag=$1
+      else	
+	domain=$1
+	flag=$2
+      fi
+	## Test 6: If domain matches TLD test then proceed to case statement for each flag output
+      if [[ -n $(grep ^$(echo ${domain} | rev | cut -d\. -f1 | rev)$ ~/tmp/tld.$(date +"%m.%d.%y").txt) ]]
+      then
+        case ${flag} in
+          -w)
+            initial_whois
+            exit 1
+            ;;
+          -b | --basic)
+	    basic_dns
+	    exit 1
+	    ;;
+	  -v | --verbose)
+	    initial_whois
+	    verbose_dns
+	    exit 1
+	    ;;
+	    -y | --makeitweird)
+	    DO_IT_ALL_dns
+	    exit 1
+	    ;;
+	  -m | --mail)
+	    echo -e "\n"
+	    mail_dns
+	    exit 1
+	    ;;
+	  -h | --help)
+	    get_help
+	    exit 1
+	    ;;
+	  -*)
+	    echo -e "\n ${RED}ERROR: Invalid option: \"${1}\"\n Use \"-h\" or \"--help\" for more options${RESET}\n" >&2
+	    exit 1
+	    ;;
+	esac
+      else
+	echo -e "\n ${RED} ERROR: Need a fully qualified domain${RESET}\n"
+      fi
 else
   echo -e "${RED} \n ERROR: Need a fully qualified domain\n Use \"-h\" or \"--help\" for more options${RESET}\n"
 fi
